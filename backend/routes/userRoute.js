@@ -3,7 +3,7 @@
 
 const express = require('express');
 const authMiddleware = require('../middleware/auth.js');
-const { loginUser, registerUser, getConfirmationToken, getUserActivity, logoutUser, removeUser, suspendUser, forceLogoutUser, getUserProfile, updateUserProfile } = require('../controllers/userController.js');
+const { loginUser, registerUser, getConfirmationToken, getUserActivity, logoutUser, removeUser, suspendUser, forceLogoutUser, getUserProfile, updateUserProfile, googleAuth } = require('../controllers/userController.js');
 
 const userRouter = express.Router();
 const multer = require('multer');
@@ -20,6 +20,7 @@ const upload = multer({ storage: storage })
 
 userRouter.post("/register", registerUser);
 userRouter.post("/login", loginUser);
+userRouter.post("/google-auth", googleAuth);   // Google OAuth sign-in / sign-up
 userRouter.post("/logout", authMiddleware, logoutUser);
 userRouter.get("/activity", getUserActivity); // New route for dashboard activity
 userRouter.get("/confirm/:token", getConfirmationToken);

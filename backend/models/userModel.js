@@ -20,7 +20,9 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, default: null },         // null for Google-auth users
+    googleId: { type: String, default: null },          // Google OAuth UID
+    googleAvatar: { type: String, default: "" },        // Google profile picture
     isActive: { type: Boolean, default: false },
     confirmationToken: { type: String },
     cartData: { type: Object, default: {} },

@@ -3,6 +3,9 @@ const bcrypt = require("bcrypt");
 const validator = require("validator");
 const userModel = require("../models/userModel.js");
 const crypto = require('crypto');
+const { OAuth2Client } = require('google-auth-library');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // removed sendConfirmationEmail logic per request
 
 //create token
@@ -234,6 +237,57 @@ const forceLogoutUser = async (req, res) => {
 }
 
 
+// Google OAuth — verify ID token, find-or-create user, return JWT
+const googleAuth = async (req, res) => {
+    const { credential } = req.body;   // Google ID token from frontend
+    if (!credential) {
+        return res.json({ success: false, message: "No Google credential provided" });
+    }
+    try {
+        // 1. Verify the Google token
+        const ticket = await googleClient.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        const { sub: googleId, email, name, picture } = payload;
+
+        // 2. Find existing user by googleId or email
+        let user = await userModel.findOne({ $or: [{ googleId }, { email }] });
+
+        if (user) {
+            // Existing user — link Google account if not linked yet
+            if (!user.googleId) {
+                user.googleId = googleId;
+                user.googleAvatar = picture || "";
+                user.isActive = true;
+                await user.save();
+            }
+        } else {
+            // New user — create account automatically
+            user = new userModel({
+                name,
+                email,
+                googleId,
+                googleAvatar: picture || "",
+                password: null,
+                isActive: true,
+            });
+            await user.save();
+        }
+
+        // Update last login
+        await userModel.findByIdAndUpdate(user._id, { lastLogin: new Date() });
+
+        // 3. Return our own JWT
+        const token = createToken(user._id);
+        res.json({ success: true, token, name: user.name });
+    } catch (error) {
+        console.error("Google auth error:", error);
+        res.json({ success: false, message: "Google authentication failed" });
+    }
+};
+
 module.exports = {
     loginUser,
     registerUser,
@@ -244,5 +298,6 @@ module.exports = {
     suspendUser,
     forceLogoutUser,
     getUserProfile,
-    updateUserProfile
+    updateUserProfile,
+    googleAuth
 }
