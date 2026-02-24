@@ -36,7 +36,8 @@
   flex: 2;
 }
 
-.logo02, .logo03 {
+.logo02,
+.logo03 {
   height: auto;
   max-width: 100%;
 }
@@ -52,7 +53,9 @@
   color: red;
 }
 
-h2, h3, h4 {
+h2,
+h3,
+h4 {
   color: #333;
   margin-bottom: 15px;
 }
@@ -70,23 +73,67 @@ p {
 /* Responsive adjustments */
 @media (max-width: 1050px) {
   .column {
-      margin-right: 10px;
+    margin-right: 10px;
   }
 }
 
 @media (max-width: 750px) {
+  .about-header h1 {
+    font-size: 26px;
+  }
+
+  .about-header p {
+    font-size: 15px;
+  }
+
   .row {
-      flex-direction: column;
-      text-align: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 14px;
+  }
+
+  .column {
+    margin-right: 0;
+    width: 100%;
   }
 
   .logo03 {
-      margin-right: 0;
-      margin-top: 20px;
-      width: 50%;
+    margin-right: 0;
+    margin-top: 20px;
+    width: 50%;
   }
 
   .text {
-      margin-top: 20px;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-us {
+    padding: 12px;
+  }
+
+  .about-header h1 {
+    font-size: 22px;
+  }
+
+  .about-header p {
+    font-size: 13px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 15px;
+  }
+
+  p {
+    font-size: 13px;
+  }
+
+  .logo03 {
+    width: 65%;
   }
 }

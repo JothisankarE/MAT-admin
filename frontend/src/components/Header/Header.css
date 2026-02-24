@@ -149,19 +149,84 @@
 
 @media (max-width: 768px) {
     .header {
-        height: 350px;
+        height: 280px;
+        margin: 16px auto;
+        border-radius: 14px;
     }
 
     .ad-content h2 {
-        font-size: 32px;
+        font-size: 26px;
     }
 
     .ad-content p {
-        font-size: 16px;
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
+
+    .offer-badge {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+
+    .shop-now-btn {
+        padding: 10px 24px;
+        font-size: 15px;
     }
 
     .carousel-nav {
-        bottom: 15px;
-        right: 20px;
+        bottom: 12px;
+        right: 14px;
+        gap: 10px;
+    }
+
+    .nav-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        height: 220px;
+        margin: 10px auto;
+        border-radius: 10px;
+    }
+
+    .ad-content {
+        padding: 12px;
+    }
+
+    .ad-content h2 {
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    .ad-content p {
+        font-size: 12px;
+        margin-bottom: 12px;
+    }
+
+    .offer-badge {
+        font-size: 10px;
+        padding: 4px 10px;
+        margin-bottom: 12px;
+    }
+
+    .shop-now-btn {
+        padding: 8px 18px;
+        font-size: 13px;
+    }
+
+    .carousel-nav {
+        bottom: 8px;
+        right: 10px;
+        gap: 8px;
+    }
+
+    .nav-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
     }
 }

@@ -314,7 +314,7 @@
   .place-order-left,
   .cart-total,
   .payment-method {
-    padding: 25px;
+    padding: 22px 18px;
   }
 
   .place-order-left h2,
@@ -335,5 +335,40 @@
   .place-order-submit {
     font-size: 16px;
     padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .place-order {
+    padding: 10px;
+    margin: 12px auto;
+    gap: 20px;
+  }
+
+  .place-order-left,
+  .cart-total,
+  .payment-method {
+    padding: 18px 14px;
+    border-radius: 14px;
+  }
+
+  .place-order-left h2,
+  .cart-total h2 {
+    font-size: 18px;
+  }
+
+  .place-order-left input {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .payment-btn {
+    font-size: 14px;
+    padding: 12px 16px;
+  }
+
+  .place-order-submit {
+    font-size: 15px;
+    padding: 14px;
   }
 }

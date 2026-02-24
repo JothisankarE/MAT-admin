@@ -208,9 +208,24 @@
 }
 
 /* Responsive Design */
+@media (max-width: 900px) {
+    .cart {
+        padding: 16px;
+    }
+
+    .cart-items-title {
+        grid-template-columns: 80px 1fr 1fr 1fr;
+    }
+
+    .cart-item-details {
+        grid-template-columns: 80px 1fr 1fr 1fr;
+    }
+}
+
 @media (max-width: 768px) {
     .cart {
-        padding: 15px;
+        margin: 24px auto;
+        padding: 14px;
     }
 
     .cart-items-title {
@@ -218,37 +233,83 @@
     }
 
     .cart-item-card {
-        padding: 15px;
+        padding: 14px;
     }
 
     .cart-item-details {
-        grid-template-columns: 1fr;
-        gap: 15px;
-        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
     }
 
     .cart-item-image {
-        margin: 0 auto;
-        width: 80px;
-        height: 80px;
+        width: 72px;
+        height: 72px;
+        align-self: center;
     }
 
     .cart-item-quantity {
-        justify-content: center;
+        justify-content: flex-start;
+    }
+
+    .cart-item-remove {
+        width: 100%;
+        text-align: center;
     }
 
     .cart-bottom {
         flex-direction: column;
+        align-items: stretch;
+        margin-top: 24px;
     }
 
     .cart-total {
         width: 100%;
+        padding: 24px 20px;
     }
 
     .cart-checkout-btn {
         width: 100%;
+        padding: 16px;
     }
 }
+
+@media (max-width: 480px) {
+    .cart {
+        margin: 12px auto;
+        padding: 10px;
+    }
+
+    .cart-item-card {
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .cart-item-image {
+        width: 60px;
+        height: 60px;
+    }
+
+    .cart-total {
+        padding: 18px 14px;
+        border-radius: 14px;
+    }
+
+    .cart-total h2 {
+        font-size: 18px;
+    }
+
+    .cart-total-details {
+        font-size: 14px;
+    }
+
+    .cart-checkout-btn {
+        font-size: 14px;
+        padding: 14px;
+    }
+}
+
 
 /* Stock Warning Styles */
 .cart-stock-warning {

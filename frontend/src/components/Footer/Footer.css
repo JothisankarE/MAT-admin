@@ -64,10 +64,36 @@
     font-size: 14px;
 }
 
-@media (max-width: 750px) {
+@media (max-width: 900px) {
+    .footer-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+    }
+
+    .footer-content-left {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer {
+        padding: 30px 5vw;
+        gap: 14px;
+        margin-top: 30px;
+        border-radius: 14px 14px 0 0;
+    }
+
     .footer-content {
         display: flex;
         flex-direction: column;
-        gap: 35px;
+        gap: 28px;
+    }
+
+    .footer h2 {
+        font-size: 20px;
+    }
+
+    .footer-copyright {
+        font-size: 12px;
     }
 }

@@ -865,6 +865,42 @@
 }
 
 @media (max-width: 768px) {
+    .profile-settings-page {
+        padding: 1rem 3%;
+    }
+
+    .settings-hero {
+        padding: 2rem 1.5rem;
+        border-radius: 16px;
+    }
+
+    .hero-content h2 {
+        font-size: 1.75rem;
+    }
+
+    .hero-content p {
+        font-size: 0.95rem;
+    }
+
+    .tab-pane {
+        padding: 1.5rem;
+    }
+
+    .profile-photo-upload-wrapper {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
+    .user-displayName {
+        font-size: 1.5rem;
+    }
+
+    .additional-info-grid {
+        grid-template-columns: 1fr;
+    }
+
     .help-grid-modern {
         grid-template-columns: 1fr;
     }
@@ -887,5 +923,92 @@
 
     .copy-btn {
         width: 100%;
+    }
+
+    .order-tracking-card {
+        padding: 1.5rem;
+    }
+
+    .steps-container {
+        gap: 0;
+    }
+
+    .tracking-step {
+        width: 80px;
+    }
+
+    .step-icon-circle {
+        width: 52px;
+        height: 52px;
+        font-size: 1.3rem;
+    }
+
+    .step-label {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-settings-page {
+        padding: 0.75rem 2%;
+    }
+
+    .settings-hero {
+        padding: 1.25rem 1rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+
+    .hero-content h2 {
+        font-size: 1.4rem;
+    }
+
+    .settings-sidebar {
+        overflow-x: auto;
+        padding: 1rem;
+    }
+
+    .sidebar-section button {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .tab-pane {
+        padding: 1rem;
+    }
+
+    .tab-pane h3 {
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-avatar-container {
+        width: 110px;
+        height: 110px;
+    }
+
+    .user-displayName {
+        font-size: 1.25rem;
+    }
+
+    .premium-coupon-card {
+        flex-direction: column;
+    }
+
+    .coupon-left-part {
+        padding: 1.25rem;
+    }
+
+    .coupon-stub {
+        display: none;
+    }
+
+    .support-card-premium {
+        padding: 1.5rem;
+    }
+
+    .shop-btn-blue {
+        width: 100%;
+        padding: 0.875rem;
     }
 }

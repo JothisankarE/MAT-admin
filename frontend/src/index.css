@@ -96,5 +96,25 @@ a:hover {
 @media (max-width: 1050px) {
   .app {
     width: 95%;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app {
+    width: 100%;
+    margin: 12px auto;
+    padding: 12px;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    width: 100%;
+    margin: 8px auto;
+    padding: 10px;
+    border-radius: 0;
+    box-shadow: none;
   }
 }

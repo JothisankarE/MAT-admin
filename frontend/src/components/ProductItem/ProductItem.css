@@ -137,8 +137,53 @@
     .item {
         width: 100%;
         margin: 0;
+        padding: 12px;
+    }
+
+    .item-img-container {
+        height: 180px;
+    }
+
+    .item-name-rating p {
+        font-size: 15px;
+    }
+
+    .item-price {
+        font-size: 16px;
     }
 }
+
+@media (max-width: 480px) {
+    .item {
+        padding: 10px;
+        border-radius: 14px;
+    }
+
+    .item-img-container {
+        height: 150px;
+        border-radius: 10px;
+    }
+
+    .item-name-rating p {
+        font-size: 13px;
+    }
+
+    .item-desc {
+        font-size: 11px;
+    }
+
+    .item-price {
+        font-size: 15px;
+    }
+
+    .add-to-cart,
+    .remove-from-cart {
+        padding: 10px 14px;
+        font-size: 13px;
+        width: 100%;
+    }
+}
+
 
 /* Stock Indicator Styles */
 .out-of-stock-overlay {
