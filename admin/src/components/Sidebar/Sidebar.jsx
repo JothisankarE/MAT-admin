@@ -59,6 +59,10 @@ const Sidebar = () => {
           <span className="sidebar-icon" style={{ fontSize: '20px' }}>💬</span>
           <p>Queries</p>
         </NavLink>
+        <NavLink to="/deleted-orders" className="sidebar-option">
+          <span className="sidebar-icon" style={{ fontSize: '20px' }}>🗑️</span>
+          <p>Deleted Orders</p>
+        </NavLink>
       </div>
     </div>
   );

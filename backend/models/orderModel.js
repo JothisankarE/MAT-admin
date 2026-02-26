@@ -11,7 +11,9 @@ const orderSchema = new mongoose.Schema({
     date: { type: Date, default: Date.now() },
     payment: { type: Boolean, default: false },
     paymentMethod: { type: String, default: "stripe" }, // stripe, cod, upi
-    upiId: { type: String, default: "" } // Store UPI ID when payment method is UPI
+    upiId: { type: String, default: "" },              // Store UPI ID when payment method is UPI
+    isDeleted: { type: Boolean, default: false },       // soft-delete flag
+    deletedAt: { type: Date, default: null }            // when it was deleted
 })
 
 const orderModel = mongoose.models.order || mongoose.model("order", orderSchema);

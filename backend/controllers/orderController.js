@@ -3,6 +3,7 @@ const userModel = require("../models/userModel.js");
 const productModel = require("../models/productModel.js");
 const Stripe = require("stripe");
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const { sendOrderConfirmationEmail } = require('../utlis/sendEmail');
 
 
 // Placing User Order for Frontend
@@ -61,6 +62,25 @@ const placeOrder = async (req, res) => {
   try {
     const { paymentMethod, upiId } = req.body;
 
+    // ── Backend duplicate guard ──
+    // Reject if the same user placed an order with the same amount within the last 60 seconds
+    const sixtySecondsAgo = new Date(Date.now() - 60 * 1000);
+    const recentDuplicate = await orderModel.findOne({
+      userId: req.body.userId,
+      amount: req.body.amount,
+      isDeleted: { $ne: true },
+      date: { $gte: sixtySecondsAgo }
+    });
+
+    if (recentDuplicate) {
+      console.warn(`Duplicate order blocked for userId ${req.body.userId}, orderId ${recentDuplicate._id}`);
+      return res.json({
+        success: false,
+        message: 'Duplicate order detected. Your previous order was already placed successfully.',
+        orderId: recentDuplicate._id
+      });
+    }
+
     // Create the new order document
     const newOrder = new orderModel({
       userId: req.body.userId,
@@ -69,21 +89,23 @@ const placeOrder = async (req, res) => {
       address: req.body.address,
       paymentMethod: paymentMethod || 'stripe',
       upiId: upiId || '',
-      payment: paymentMethod === 'cod' ? false : false, // COD orders are marked as unpaid until delivered
+      payment: false,
     });
     await newOrder.save();
     await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
 
+
     // Handle different payment methods
     if (paymentMethod === 'cod') {
-      // Cash on Delivery - Order placed successfully, payment on delivery
+      // Cash on Delivery - Order placed successfully, send confirmation email after 30 seconds
+      setTimeout(() => { sendOrderConfirmationEmail(newOrder); }, 30000);
       res.json({
         success: true,
         message: 'Order placed successfully! Payment will be collected on delivery.',
         orderId: newOrder._id
       });
     } else if (paymentMethod === 'upi') {
-      // UPI Payment - Order placed, UPI ID saved for verification
+      // UPI Payment - Order placed, UPI ID saved for verification, email sent after verify
       res.json({
         success: true,
         message: 'Order placed successfully! Please complete payment using UPI.',
@@ -144,10 +166,10 @@ const placeOrder = async (req, res) => {
 
 
 
-// Listing Order for Admin panel
+// Listing Orders for Admin panel (exclude soft-deleted)
 const listOrders = async (req, res) => {
   try {
-    const orders = await orderModel.find({});
+    const orders = await orderModel.find({ isDeleted: { $ne: true } });
     res.json({ success: true, data: orders })
   } catch (error) {
     console.log(error);
@@ -155,14 +177,69 @@ const listOrders = async (req, res) => {
   }
 }
 
+// Soft-delete a Delivered order (admin only)
+const softDeleteOrder = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    if (!orderId) return res.json({ success: false, message: "orderId is required" });
+
+    const order = await orderModel.findById(orderId);
+    if (!order) return res.json({ success: false, message: "Order not found" });
+
+    // Case-insensitive check
+    if (order.status.toLowerCase() !== 'delivered') {
+      return res.json({ success: false, message: "Only Delivered orders can be deleted" });
+    }
+
+    const updated = await orderModel.findByIdAndUpdate(
+      orderId,
+      { $set: { isDeleted: true, deletedAt: new Date() } },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.json({ success: false, message: "Failed to update order" });
+    }
+
+    console.log(`Order ${orderId} soft-deleted at ${updated.deletedAt}`);
+    res.json({ success: true, message: "Order moved to deleted list" });
+  } catch (error) {
+    console.error("softDeleteOrder error:", error);
+    res.json({ success: false, message: "Server error: " + error.message });
+  }
+};
+
+// List all soft-deleted orders
+const listDeletedOrders = async (req, res) => {
+  try {
+    const orders = await orderModel.find({ isDeleted: true }).sort({ deletedAt: -1 });
+    res.json({ success: true, data: orders });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error fetching deleted orders" });
+  }
+};
+
 // User Orders for Frontend
 const userOrders = async (req, res) => {
   try {
-    const orders = await orderModel.find({ userId: req.body.userId });
-    res.json({ success: true, data: orders })
+    const orders = await orderModel
+      .find({ userId: req.body.userId, isDeleted: { $ne: true } })
+      .sort({ date: -1 });
+
+    // Deduplicate by _id (safety net against any DB-level duplicates)
+    const seen = new Set();
+    const uniqueOrders = orders.filter(order => {
+      const id = order._id.toString();
+      if (seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+
+    res.json({ success: true, data: uniqueOrders });
   } catch (error) {
     console.log(error);
-    res.json({ success: false, message: "Error" })
+    res.json({ success: false, message: "Error" });
   }
 }
 
@@ -181,7 +258,11 @@ const verifyOrder = async (req, res) => {
   const { orderId, success } = req.body;
   try {
     if (success === "true") {
-      await orderModel.findByIdAndUpdate(orderId, { payment: true });
+      const updatedOrder = await orderModel.findByIdAndUpdate(orderId, { payment: true }, { new: true });
+      // Send confirmation email 30 seconds after successful payment verification (Stripe & UPI)
+      if (updatedOrder) {
+        setTimeout(() => { sendOrderConfirmationEmail(updatedOrder); }, 30000);
+      }
       res.json({ success: true, message: "Paid" })
     }
     else {
@@ -385,6 +466,27 @@ const generateInvoice = async (req, res) => {
   }
 }
 
+// Permanently delete an already soft-deleted order from MongoDB
+const permanentDeleteOrder = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    if (!orderId) return res.json({ success: false, message: 'orderId is required' });
+
+    const order = await orderModel.findById(orderId);
+    if (!order) return res.json({ success: false, message: 'Order not found' });
+    if (!order.isDeleted) {
+      return res.json({ success: false, message: 'Only archived (deleted) orders can be permanently removed' });
+    }
+
+    await orderModel.findByIdAndDelete(orderId);
+    console.log(`Order ${orderId} permanently deleted by admin.`);
+    res.json({ success: true, message: 'Order permanently deleted' });
+  } catch (error) {
+    console.error('permanentDeleteOrder error:', error);
+    res.json({ success: false, message: 'Server error: ' + error.message });
+  }
+};
+
 module.exports = {
   placeOrder,
   listOrders,
@@ -392,5 +494,8 @@ module.exports = {
   updateStatus,
   verifyOrder,
   getDashboardStats,
-  generateInvoice
+  generateInvoice,
+  softDeleteOrder,
+  listDeletedOrders,
+  permanentDeleteOrder
 };

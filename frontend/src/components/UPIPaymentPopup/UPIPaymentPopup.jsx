@@ -13,6 +13,7 @@ const UPIPaymentPopup = ({
 }) => {
     const [countdown, setCountdown] = useState(300); // 5 minutes countdown
     const [paymentStatus, setPaymentStatus] = useState('pending'); // pending, processing, success, failed
+    const [qrLoading, setQrLoading] = useState(true); // loader before QR appears
 
     // Generate UPI payment URL
     const generateUPIUrl = () => {
@@ -23,6 +24,17 @@ const UPIPaymentPopup = ({
 
         return `upi://pay?pa=${payeeVPA}&pn=${payeeName}&am=${amount}&cu=INR&tn=${transactionNote}`;
     };
+
+    // QR loader: show for 2 seconds on popup open
+    useEffect(() => {
+        if (!isOpen) {
+            setQrLoading(true); // reset for next open
+            return;
+        }
+        setQrLoading(true);
+        const loaderTimer = setTimeout(() => setQrLoading(false), 2000);
+        return () => clearTimeout(loaderTimer);
+    }, [isOpen]);
 
     // Countdown timer
     useEffect(() => {
@@ -86,6 +98,37 @@ const UPIPaymentPopup = ({
                             <div className="spinner"></div>
                             <h3>Verifying Payment...</h3>
                             <p>Please wait while we confirm your payment.</p>
+                        </div>
+                    ) : qrLoading ? (
+                        /* ── QR Page Loader ── */
+                        <div className="upi-qr-loader">
+                            <div className="upi-loader-ring-wrap">
+                                <svg className="upi-loader-ring-svg" viewBox="0 0 100 100">
+                                    <circle className="upi-ring-track" cx="50" cy="50" r="42" fill="none" strokeWidth="5" />
+                                    <circle className="upi-ring-spin" cx="50" cy="50" r="42" fill="none" strokeWidth="5"
+                                        strokeDasharray="264" strokeDashoffset="66" />
+                                </svg>
+                                <div className="upi-loader-icon-circle">
+                                    <svg viewBox="0 0 24 24" className="upi-qr-icon" fill="none"
+                                        stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="3" y="3" width="7" height="7" rx="1" />
+                                        <rect x="14" y="3" width="7" height="7" rx="1" />
+                                        <rect x="3" y="14" width="7" height="7" rx="1" />
+                                        <rect x="5" y="5" width="3" height="3" fill="#667eea" stroke="none" />
+                                        <rect x="16" y="5" width="3" height="3" fill="#667eea" stroke="none" />
+                                        <rect x="5" y="16" width="3" height="3" fill="#667eea" stroke="none" />
+                                        <path d="M14 14h3v3h-3z" fill="#667eea" stroke="none" />
+                                        <path d="M19 14v3M14 19h3" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <h3 className="upi-loader-title">Generating QR Code</h3>
+                            <p className="upi-loader-subtitle">Preparing your secure payment link…</p>
+                            <div className="upi-loader-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
                         </div>
                     ) : (
                         <>

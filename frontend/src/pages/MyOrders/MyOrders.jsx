@@ -12,19 +12,28 @@ const MyOrders = () => {
   const { url, token } = useContext(StoreContext);
 
   const fetchOrders = async () => {
-    const response = await axios.post(url + "/api/order/userorders", {}, { headers: { token } });
-    setData(response.data.data || []);
+    try {
+      const response = await axios.post(url + "/api/order/userorders", {}, { headers: { token } });
+      const raw = response.data.data || [];
+
+      // Client-side dedup by _id (safety net)
+      const seen = new Set();
+      const unique = raw.filter(order => {
+        if (seen.has(order._id)) return false;
+        seen.add(order._id);
+        return true;
+      });
+
+      setData(unique);
+    } catch (err) {
+      console.error('fetchOrders error:', err);
+    }
   }
 
   useEffect(() => {
     if (token) {
       fetchOrders();
-
-      // Polling for order status updates every 5 seconds
-      const interval = setInterval(() => {
-        fetchOrders();
-      }, 5000);
-
+      const interval = setInterval(fetchOrders, 5000);
       return () => clearInterval(interval);
     }
   }, [token])
@@ -73,9 +82,9 @@ const MyOrders = () => {
     <div className='my-orders'>
       <h2>My Orders</h2>
       <div className="container">
-        {data.map((order, index) => {
+        {data.map((order) => {
           return (
-            <div key={index} className='my-orders-order'>
+            <div key={order._id} className='my-orders-order'>
               <div className="order-main-info">
                 <div className="order-icon-wrapper">
                   <img src={assets.parcel_icon} alt="" />

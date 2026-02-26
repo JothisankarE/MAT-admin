@@ -6,6 +6,7 @@ import { assets, url } from '../../assets/assets';
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
+  const [deletingId, setDeletingId] = useState(null); // track which order is being deleted
 
   const fetchAllOrders = async () => {
     const response = await axios.get(`${url}/api/order/list`);
@@ -29,16 +30,32 @@ const Order = () => {
     }
   };
 
-
+  const deleteHandler = async (orderId) => {
+    if (!window.confirm("Move this delivered order to the Deleted Orders list?")) return;
+    setDeletingId(orderId);
+    try {
+      const response = await axios.post(`${url}/api/order/delete`, { orderId });
+      if (response.data.success) {
+        toast.success("Order moved to Deleted Orders ✅");
+        await fetchAllOrders();
+      } else {
+        toast.error(response.data.message || "Could not delete order");
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+      if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
+        toast.error("Cannot connect to server — please restart the backend");
+      } else {
+        toast.error(err.response?.data?.message || "Error deleting order");
+      }
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   useEffect(() => {
     fetchAllOrders();
-
-    // Polling for new orders every 5 seconds
-    const interval = setInterval(() => {
-      fetchAllOrders();
-    }, 5000);
-
+    const interval = setInterval(() => { fetchAllOrders(); }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -91,6 +108,28 @@ const Order = () => {
                   </optgroup>
                 </select>
               </div>
+
+              {/* Delete button — only enabled when Delivered */}
+              <button
+                className={`order-delete-btn ${order.status === 'Delivered' ? 'enabled' : 'disabled'}`}
+                onClick={() => order.status === 'Delivered' && deleteHandler(order._id)}
+                disabled={order.status !== 'Delivered' || deletingId === order._id}
+                title={order.status !== 'Delivered' ? 'Only available for Delivered orders' : 'Move to Deleted Orders'}
+              >
+                {deletingId === order._id ? (
+                  <span className="delete-spinner"></span>
+                ) : (
+                  <>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                      <path d="M10 11v6M14 11v6" />
+                      <path d="M9 6V4h6v2" />
+                    </svg>
+                    Delete
+                  </>
+                )}
+              </button>
             </div>
           </div>
         ))}

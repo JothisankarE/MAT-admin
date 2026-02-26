@@ -209,6 +209,7 @@ const PlaceOrder = () => {
   const [showUPIPopup, setShowUPIPopup] = useState(false); // UPI popup visibility
   const [pendingOrderId, setPendingOrderId] = useState(null); // Store order ID for UPI payment
   const [isProcessing, setIsProcessing] = useState(false); // Loading state
+  const isSubmittingRef = React.useRef(false); // Hard lock against double-submission
   const { getTotalCartAmount, token, product_list, cartItems, url, setCartItems } = useContext(StoreContext);
   const navigate = useNavigate();
 
@@ -218,9 +219,8 @@ const PlaceOrder = () => {
   };
 
   const handleCashOnDelivery = () => {
+    if (isProcessing || isSubmittingRef.current) return; // block double-click
     setPaymentMethod('cod');
-    // Using setTimeout to allow state update before submission if needed, 
-    // but better to just call logic directly.
     submitOrder('cod');
   };
 
@@ -230,20 +230,27 @@ const PlaceOrder = () => {
   };
 
   const submitOrder = async (method) => {
+    // ── Hard duplicate-submission guard ──
+    if (isSubmittingRef.current || isProcessing) return;
+    isSubmittingRef.current = true;
+
     if (!method) {
       toast.error('Please select a payment method');
+      isSubmittingRef.current = false;
       return;
     }
 
     // Validate UPI ID if UPI is selected
     if (method === 'upi' && !data.upiId.trim()) {
       toast.error('Please enter your UPI ID');
+      isSubmittingRef.current = false;
       return;
     }
 
     // Validate UPI ID format (basic validation)
     if (method === 'upi' && !data.upiId.includes('@')) {
       toast.error('Please enter a valid UPI ID (e.g., yourname@upi)');
+      isSubmittingRef.current = false;
       return;
     }
 
@@ -290,18 +297,22 @@ const PlaceOrder = () => {
           setIsProcessing(false); // Stop main loader for popup
           setPendingOrderId(result.orderId);
           setShowUPIPopup(true);
+          isSubmittingRef.current = false;
         } else {
           setCartItems({});
           setIsProcessing(false);
+          isSubmittingRef.current = false;
           toast.success('Order placed successfully!');
           navigate('/myorders');
         }
       } else {
         setIsProcessing(false);
+        isSubmittingRef.current = false;
         toast.error('Error placing the order. Please try again.');
       }
     } catch (error) {
       setIsProcessing(false);
+      isSubmittingRef.current = false;
       toast.error('There was an error while placing the order.');
       console.error(error);
     }
@@ -414,14 +425,16 @@ const PlaceOrder = () => {
               <button
                 type='button'
                 className={`payment-btn ${paymentMethod === 'stripe' ? 'selected' : ''}`}
-                onClick={() => setPaymentMethod('stripe')}
+                onClick={() => !isProcessing && setPaymentMethod('stripe')}
+                disabled={isProcessing}
               >
                 Pay with Stripe
               </button>
               <button
                 type='button'
                 className={`payment-btn ${paymentMethod === 'upi' ? 'selected' : ''}`}
-                onClick={() => setPaymentMethod('upi')}
+                onClick={() => !isProcessing && setPaymentMethod('upi')}
+                disabled={isProcessing}
               >
                 <span className='upi-icon'>📱</span> Pay with UPI
               </button>
@@ -429,6 +442,7 @@ const PlaceOrder = () => {
                 type='button'
                 className={`payment-btn ${paymentMethod === 'cod' ? 'selected' : ''}`}
                 onClick={handleCashOnDelivery}
+                disabled={isProcessing}
               >
                 Cash on Delivery
               </button>

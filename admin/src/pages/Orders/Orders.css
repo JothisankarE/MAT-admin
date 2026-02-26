@@ -191,3 +191,72 @@
         transform: translateY(0);
     }
 }
+
+/* ── Delete Button ── */
+.order-delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: 2px solid transparent;
+    cursor: not-allowed;
+    transition: all 0.25s ease;
+    letter-spacing: 0.3px;
+}
+
+.order-delete-btn svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+}
+
+/* Disabled (non-Delivered) — muted gray */
+.order-delete-btn.disabled {
+    background: #f1f5f9;
+    color: #b0bac4;
+    border-color: #e2e8f0;
+    opacity: 0.7;
+}
+
+/* Enabled (Delivered) — vibrant red */
+.order-delete-btn.enabled {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+    cursor: pointer;
+}
+
+.order-delete-btn.enabled:hover {
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(220, 38, 38, 0.35);
+}
+
+.order-delete-btn.enabled:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Mini spinner inside the button */
+.delete-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #fecaca;
+    border-top-color: #dc2626;
+    border-radius: 50%;
+    animation: deleteSpin 0.7s linear infinite;
+}
+
+@keyframes deleteSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}

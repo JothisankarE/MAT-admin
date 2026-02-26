@@ -10,6 +10,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Content from './pages/Home/Content';
 import ChatQueries from './pages/ChatQueries/ChatQueries';
+import DeletedOrders from './pages/DeletedOrders/DeletedOrders';
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token') || "");
@@ -37,6 +38,7 @@ const App = () => {
                   <Route path="/list" element={<List token={token} />} />
                   <Route path="/orders" element={<Orders token={token} />} />
                   <Route path="/queries" element={<ChatQueries />} />
+                  <Route path="/deleted-orders" element={<DeletedOrders />} />
                 </Routes>
               </div>
             </div>
