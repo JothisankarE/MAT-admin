@@ -2,8 +2,9 @@
   "name": "dumpy-ecom-proj-root",
   "private": true,
   "scripts": {
+    "install-admin": "npm --prefix admin install",
+    "build": "npm --prefix admin install && npm --prefix admin run build",
     "dev": "npm --prefix admin run dev",
-    "build": "npm --prefix admin run build",
     "start": "npm --prefix admin run preview"
   }
 }

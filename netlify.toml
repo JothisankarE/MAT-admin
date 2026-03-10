@@ -1,5 +1,5 @@
 [build]
-  command = "npm --prefix admin install && npm --prefix admin run build"
+  command = "npm run build"
   publish = "admin/dist"
 
 [[redirects]]
@@ -7,6 +7,10 @@
   to = "/index.html"
   status = 200
 
+[dev]
+  command = "npm run dev"
+  publish = "admin/dist"
+  port = 5173
+
 [context.production.environment]
-# Optional: ensure NODE_ENV is production during build
   NODE_ENV = "production"
