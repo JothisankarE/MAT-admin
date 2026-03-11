@@ -2,12 +2,11 @@
   "name": "dumpy-ecom-proj-root",
   "private": true,
   "scripts": {
-    "install:all": "npm install && npm --prefix backend install && npm --prefix admin install",
-    "dev:backend": "npm --prefix backend run server",
-    "dev:admin": "npm --prefix admin run dev",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:admin\"",
-    "build:admin": "npm --prefix admin install && npm --prefix admin run build",
-    "start": "npm --prefix backend start"
+    "install:all": "npm install && npm --prefix apps/backend install && npm --prefix apps/frontend install",
+    "dev:backend": "npm --prefix apps/backend run server",
+    "dev:frontend": "npm --prefix apps/frontend run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "start": "npm --prefix apps/backend start"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

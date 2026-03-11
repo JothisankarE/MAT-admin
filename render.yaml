@@ -1,11 +1,11 @@
-# Updated deployment config
 services:
   - type: web
-    name: mat-textile-hub-admin
+    name: mat-textile-hub-backend
     env: node
     plan: free
-    buildCommand: npm install && cd admin && npm install && npm run build && cd ../backend && npm install && ls -R admin-dist
-    startCommand: cd backend && npm start
+    rootDir: apps/backend
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
       - key: MONGODB_URI
         sync: false
