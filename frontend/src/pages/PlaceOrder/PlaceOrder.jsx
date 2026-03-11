@@ -307,7 +307,7 @@ const PlaceOrder = () => {
       } else {
         setIsProcessing(false);
         isSubmittingRef.current = false;
-        toast.error('Error placing the order. Please try again.');
+        toast.error(result.message || 'Error placing the order. Please try again.');
       }
     } catch (error) {
       setIsProcessing(false);
