@@ -94,6 +94,16 @@ app.get("/", (req, res) => {
       padding: 8px 20px; border-radius: 8px; font-family: monospace; font-size: 14px;
       color: #a5b4fc; margin-top: 15px; letter-spacing: 0.5px;
     }
+    .admin-url {
+      display: inline-block; background: rgba(236,72,153,0.1); border: 1px solid rgba(236,72,153,0.2);
+      padding: 8px 20px; border-radius: 8px; font-family: monospace; font-size: 14px;
+      color: #f472b6; margin-top: 15px; margin-left: 10px; letter-spacing: 0.5px;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .admin-url:hover {
+      background: rgba(236,72,153,0.2);
+      color: #fff;
+    }
     .section {
       margin-bottom: 35px;
       animation: fadeInUp 0.6s ease;
@@ -172,7 +182,8 @@ app.get("/", (req, res) => {
       <div class="status-badge"><span class="status-dot"></span> API Online</div>
       <h1>MAT Traders API</h1>
       <p class="subtitle">E-Commerce Backend Service — All Systems Operational</p>
-      <div class="base-url">https://textuser-ecom.onrender.com</div>
+      <div class="base-url">API: https://textuser-ecom.onrender.com</div>
+      <a href="https://mat-textile-hub-admin.onrender.com/" class="admin-url" target="_blank">Admin Panel: https://mat-textile-hub-admin.onrender.com/</a>
     </div>
 
     <div class="stats">
