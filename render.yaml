@@ -3,7 +3,7 @@ services:
     name: mat-textile-hub-backend
     env: node
     plan: free
-    rootDir: apps/backend
+    rootDir: backend
     buildCommand: npm install
     startCommand: npm start
     envVars:
