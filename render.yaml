@@ -3,7 +3,7 @@ services:
     name: mat-textile-hub-admin
     env: node
     plan: free
-    buildCommand: cd admin && npm install && npm run build && cd ../backend && npm install
+    buildCommand: npm install && npm run build && cp -r admin/dist backend/admin-dist && cd backend && npm install
     startCommand: cd backend && npm start
     envVars:
       - key: GOOGLE_CLIENT_ID
