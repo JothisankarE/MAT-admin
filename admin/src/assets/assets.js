@@ -19,4 +19,5 @@ export const assets = {
     parcel_icon
 }
 
-export const url = import.meta.env.VITE_BACKEND_URL !== undefined ? import.meta.env.VITE_BACKEND_URL : "https://mat-textile-hub-admin.onrender.com"
+export const url = import.meta.env.VITE_BACKEND_URL || (import.meta.env.DEV ? "http://localhost:4000" : "");
+
