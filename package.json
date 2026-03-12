@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "admin-install": "cd admin && npm install",
+    "admin-build": "cd admin && npm run build",
     "frontend-install": "cd frontend && npm install",
     "frontend-build": "cd frontend && npm run build",
-    "build": "npm run frontend-install && npm run frontend-build"
+    "build": "npm run admin-install && npm run admin-build && npm run frontend-install && npm run frontend-build"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
