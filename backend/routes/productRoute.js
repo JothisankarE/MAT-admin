@@ -11,14 +11,18 @@ const productRouter = express.Router();
 
 //Image Storage Engine (Saving Image to uploads folder & rename it)
 
+const isVercel = process.env.VERCEL === '1';
+
 const storage = multer.diskStorage({
-    destination: 'uploads',
+    destination: isVercel ? '/tmp' : 'uploads',
     filename: (req, file, cb) => {
         return cb(null, `${Date.now()}${file.originalname}`);
     }
-})
+});
+
 
 const upload = multer({ storage: storage })
+
 
 productRouter.get("/list", listProduct);
 productRouter.post("/add", upload.array('image', 4), addProduct); // Allow up to 4 images (1 main + 3 extra)

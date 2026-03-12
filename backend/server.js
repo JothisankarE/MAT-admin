@@ -25,13 +25,16 @@ const port = process.env.PORT || 4000
 app.use(express.json())
 app.use(cors())
 
+const isVercel = process.env.VERCEL === '1';
+
 // db connection
 connectDB()
 
 // api endpoints
 app.use("/api/user", userRouter)
 app.use("/api/food", foodRouter)
-app.use("/images", express.static('uploads'))
+app.use("/images", express.static(isVercel ? '/tmp' : 'uploads'))
+
 app.use("/api/cart", cartRouter)
 app.use("/api/order", orderRouter)
 app.use("/api/chat", chatRouter)

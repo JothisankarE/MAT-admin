@@ -9,12 +9,15 @@ const userRouter = express.Router();
 const multer = require('multer');
 
 // Image Storage Engine
+const isVercel = process.env.VERCEL === '1';
+
 const storage = multer.diskStorage({
-    destination: 'uploads',
+    destination: isVercel ? '/tmp' : 'uploads',
     filename: (req, file, cb) => {
         return cb(null, `${Date.now()}${file.originalname}`);
     }
 })
+
 
 const upload = multer({ storage: storage })
 
