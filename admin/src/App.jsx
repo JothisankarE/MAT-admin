@@ -13,7 +13,8 @@ import ChatQueries from './pages/ChatQueries/ChatQueries';
 import DeletedOrders from './pages/DeletedOrders/DeletedOrders';
 
 const App = () => {
-  const [token, setToken] = useState(localStorage.getItem('token') || "");
+  const [token, setToken] = useState("");
+
 
   useEffect(() => {
     localStorage.setItem('token', token);
